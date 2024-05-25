@@ -61,16 +61,25 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    with ApiClient(configuration) as api_client:
-        api_instance = MessagingApi(api_client)
-        api_instance.show_loading_animation_with_http_info(
-            ShowLoadingAnimationRequest(chatId=event.source.user_id, 
-                                        loadingSeconds=5)) # ShowLoadingAnimationRequest
-        prompt = event.message.text
-        llm_text = llm_responser(llm_server_url, prompt) # 呼叫大模型
-        message = TextSendMessage(text=llm_text) # 將大模型的回應轉成 LINE 訊息格式
-        line_bot_api.reply_message(event.reply_token, message)
-#        api_instance.reply_message(ReplyMessageRequest(replyToken=event.reply_token, messages=message))
+    user_message = event.message.text
+    model_name = "gemma:7b"
+    if user_message[:5] == "/help":
+        help_message = "切換模型的指令：\n\n/model 模型名稱\n\n模型名稱\nGemma 7B: gemma:7b\n零一萬物: yi:v1.5\nMistral 7B: mistral:7b"
+        line_bot_api.reply_message(event.reply_token, help_message) # 送出回應訊息
+    else:
+        if user_message[:6] == "/model":
+            model_name = user_message[6:]
+        else:
+            with ApiClient(configuration) as api_client:
+                api_instance = MessagingApi(api_client)
+                api_instance.show_loading_animation_with_http_info(
+                    ShowLoadingAnimationRequest(chatId=event.source.user_id, 
+                                                loadingSeconds=5)) # ShowLoadingAnimationRequest
+                prompt = event.message.text
+                llm_text = llm_responser(llm_server_url, model_name=model_name, prompt_text=prompt) # 呼叫大模型
+                message = TextSendMessage(text=llm_text) # 將大模型的回應轉成 LINE 訊息格式
+                line_bot_api.reply_message(event.reply_token, message) # 送出回應訊息
+        #        api_instance.reply_message(ReplyMessageRequest(replyToken=event.reply_token, messages=message))
 
 # 以下程式碼是要給 Render.com 用來自動觸發測試程式是否活著用的，
 # 另要需要搭配 uptime.com 的監控服務，以便 webhook 持續動作不停機。
