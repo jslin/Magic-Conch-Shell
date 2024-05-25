@@ -64,11 +64,12 @@ def handle_message(event):
     user_message = event.message.text
     model_name = "gemma:7b"
     if user_message[:5] == "/help":
-        help_message = "切換模型的指令：\n\n/model 模型名稱\n\n模型名稱\nGemma 7B: gemma:7b\n零一萬物: yi:v1.5\nMistral 7B: mistral:7b"
+        help_message = "切換模型的指令：\n\n/model 模型名稱\n\n模型名稱\n\nGemma 7B: gemma:7b\n零一萬物: yi:v1.5\nMistral 7B: mistral:7b"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=help_message)) # 送出回應訊息
     else:
         if user_message[:6] == "/model":
             model_name = user_message[6:]
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"切換至{model_name}")) # 送出回應訊息
         else:
             with ApiClient(configuration) as api_client:
                 api_instance = MessagingApi(api_client)
