@@ -18,7 +18,6 @@ configuration = Configuration(access_token=os.environ['CHANNEL_ACCESS_TOKEN'])
 line_bot_api = LineBotApi(os.environ['CHANNEL_ACCESS_TOKEN'])
 handler = WebhookHandler(os.environ['CHANNEL_SECRET'])
 llm_server_url = os.environ['REMOTE_LLM_SERVER']
-model_name = "gemma:7b"
 
 def llm_responser(url=llm_server_url, model_name="gemma:7b", prompt_text=""):
     headers = {
@@ -61,6 +60,7 @@ def callback():
     return 'OK'
 
 @handler.add(MessageEvent, message=TextMessage)
+model_name = "gemma:7b"
 def handle_message(event):
     user_message = event.message.text
     if user_message[:5] == "/help":
