@@ -68,7 +68,7 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=help_message)) # 送出回應訊息
     else:
         if user_message[:6] == "/model":
-            model_name = user_message[6:]
+            model_name = user_message.split(" ")[1]
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"切換至{model_name}")) # 送出回應訊息
         else:
             with ApiClient(configuration) as api_client:
