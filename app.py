@@ -88,7 +88,7 @@ def handle_message(event):
 @app.route("/healthz", methods=['GET'])
 def healthz():
     app.logger.info("Health trigger")
-    return 'OK'
+    return '200 OK'
 
 
 if __name__ == "__main__":
